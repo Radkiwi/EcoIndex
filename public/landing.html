@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoIndex — Empowering People to Create a Thriving Planet for All</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0a1628;
+      --deep:   #0d1f3c;
+      --teal:   #00c896;
+      --teal2:  #00a878;
+      --gold:   #f5c842;
+      --sky:    #4fc3f7;
+      --fog:    rgba(10,22,40,0.85);
+      --white:  #ffffff;
+      --muted:  rgba(255,255,255,0.6);
+      --card:   rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --radius: 16px;
+      --font:   'Segoe UI', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--navy);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(10,22,40,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 1.2rem; font-weight: 700; letter-spacing: 0.5px;
+      color: var(--white);
+    }
+    .nav-logo span { color: var(--teal); }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      background: var(--teal); color: var(--navy);
+      border: none; border-radius: 8px;
+      padding: 10px 22px; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--teal2); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,200,150,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 20% 80%, rgba(79,195,247,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 80% 60%, rgba(245,200,66,0.06) 0%, transparent 60%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,200,150,0.12); border: 1px solid rgba(0,200,150,0.3);
+      border-radius: 100px; padding: 6px 16px; font-size: 0.8rem;
+      color: var(--teal); margin-bottom: 28px; letter-spacing: 0.5px;
+    }
+    .hero-badge::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--teal); animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800; line-height: 1.1;
+      max-width: 900px; margin-bottom: 24px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--sky) 50%, var(--gold) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--muted); max-width: 680px; line-height: 1.7;
+      margin-bottom: 48px;
+    }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      background: var(--teal); color: var(--navy);
+      border: none; border-radius: 10px;
+      padding: 16px 32px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--teal2); transform: translateY(-2px); }
+    .btn-ghost {
+      background: transparent; color: var(--white);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px 32px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+      display: inline-block;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-2px); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 48px;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 24px; text-align: center;
+    }
+    .stat-item {}
+    .stat-num {
+      font-size: 2.2rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--teal), var(--sky));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── SECTION WRAPPER ── */
+    section { padding: 96px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 16px; font-weight: 600;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800; line-height: 1.2; margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.1rem; color: var(--muted); line-height: 1.7;
+      max-width: 640px; margin-bottom: 56px;
+    }
+
+    /* ── AUDIENCE SELECTOR ── */
+    .audience-section { background: var(--deep); }
+    .audience-tabs {
+      display: flex; gap: 8px; margin-bottom: 48px; flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--muted); border-radius: 8px;
+      padding: 10px 20px; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .tab-btn:hover { border-color: rgba(0,200,150,0.4); color: var(--white); }
+    .tab-btn.active {
+      background: rgba(0,200,150,0.15); border-color: var(--teal);
+      color: var(--teal);
+    }
+    .audience-panel { display: none; }
+    .audience-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    .audience-text h3 { font-size: 1.8rem; font-weight: 800; margin-bottom: 16px; }
+    .audience-text p { color: var(--muted); line-height: 1.8; margin-bottom: 20px; font-size: 1rem; }
+    .audience-points { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .audience-points li {
+      display: flex; gap: 14px; align-items: flex-start;
+      color: var(--muted); font-size: 0.95rem; line-height: 1.6;
+    }
+    .point-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: rgba(0,200,150,0.15); display: flex;
+      align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 0.85rem; margin-top: 1px;
+    }
+    .audience-visual {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+    }
+    .audience-visual-title {
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 24px; font-weight: 600;
+    }
+    .metric-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-label { font-size: 0.9rem; color: var(--muted); }
+    .metric-value {
+      font-size: 1.1rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--teal), var(--sky));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .progress-bar-wrap { margin-top: 6px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { height: 6px; background: var(--border); border-radius: 3px; }
+    .progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--teal), var(--sky)); }
+
+    /* ── HOW IT WORKS ── */
+    .how-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .how-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .how-card:hover { border-color: rgba(0,200,150,0.3); transform: translateY(-4px); }
+    .how-card::before {
+      content: attr(data-num);
+      position: absolute; top: -12px; right: 16px;
+      font-size: 5rem; font-weight: 900;
+      color: rgba(0,200,150,0.06); line-height: 1;
+      pointer-events: none;
+    }
+    .how-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(0,200,150,0.12); display: flex;
+      align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 20px;
+    }
+    .how-card h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+    .how-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+
+    /* ── THREE HEALTHS ── */
+    .health-section { background: var(--deep); }
+    .health-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .health-card {
+      border-radius: var(--radius); padding: 40px 32px;
+      position: relative; overflow: hidden;
+    }
+    .health-card.personal {
+      background: linear-gradient(135deg, rgba(0,200,150,0.15) 0%, rgba(0,200,150,0.05) 100%);
+      border: 1px solid rgba(0,200,150,0.2);
+    }
+    .health-card.land {
+      background: linear-gradient(135deg, rgba(245,200,66,0.15) 0%, rgba(245,200,66,0.05) 100%);
+      border: 1px solid rgba(245,200,66,0.2);
+    }
+    .health-card.ocean {
+      background: linear-gradient(135deg, rgba(79,195,247,0.15) 0%, rgba(79,195,247,0.05) 100%);
+      border: 1px solid rgba(79,195,247,0.2);
+    }
+    .health-emoji { font-size: 2.5rem; margin-bottom: 20px; }
+    .health-card h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; }
+    .health-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 16px; }
+    .health-fact {
+      font-size: 0.85rem; font-weight: 600; padding: 10px 14px;
+      border-radius: 8px; background: rgba(255,255,255,0.06);
+    }
+    .health-card.personal .health-fact { color: var(--teal); }
+    .health-card.land .health-fact { color: var(--gold); }
+    .health-card.ocean .health-fact { color: var(--sky); }
+
+    /* ── PLATFORMS ── */
+    .platforms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .platform-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+      transition: all 0.2s;
+    }
+    .platform-card:hover { border-color: rgba(0,200,150,0.3); transform: translateY(-4px); }
+    .platform-tag {
+      display: inline-block; font-size: 0.7rem; letter-spacing: 1.5px;
+      text-transform: uppercase; font-weight: 700;
+      padding: 4px 10px; border-radius: 4px; margin-bottom: 20px;
+    }
+    .tag-students { background: rgba(0,200,150,0.15); color: var(--teal); }
+    .tag-farmers  { background: rgba(245,200,66,0.15); color: var(--gold); }
+    .tag-industry { background: rgba(79,195,247,0.15); color: var(--sky); }
+    .platform-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; }
+    .platform-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+    .platform-features { list-style: none; margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .platform-features li { display: flex; gap: 10px; font-size: 0.85rem; color: var(--muted); }
+    .platform-features li::before { content: '→'; color: var(--teal); flex-shrink: 0; }
+
+    /* ── DATA LAYER ── */
+    .data-section { background: var(--deep); }
+    .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .data-layers { display: flex; flex-direction: column; gap: 12px; }
+    .data-layer {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px;
+      display: flex; align-items: center; gap: 16px;
+      transition: border-color 0.2s;
+    }
+    .data-layer:hover { border-color: rgba(0,200,150,0.3); }
+    .layer-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .layer-name { font-size: 0.9rem; font-weight: 600; }
+    .layer-desc { font-size: 0.8rem; color: var(--muted); }
+    .layer-res {
+      margin-left: auto; font-size: 0.75rem;
+      background: rgba(0,200,150,0.1); color: var(--teal);
+      padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+    }
+
+    /* ── LOOP DIAGRAM ── */
+    .loop-section {}
+    .loop-diagram {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 0; align-items: center; margin: 0 auto; max-width: 900px;
+      margin-bottom: 56px;
+    }
+    .loop-step {
+      text-align: center; padding: 24px 16px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .loop-arrow {
+      text-align: center; color: var(--teal); font-size: 1.4rem;
+      padding: 0 4px;
+    }
+    .loop-step-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .loop-step-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; }
+    .loop-step-sub { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── SROI CALLOUT ── */
+    .sroi-callout {
+      background: linear-gradient(135deg, rgba(0,200,150,0.12) 0%, rgba(79,195,247,0.08) 100%);
+      border: 1px solid rgba(0,200,150,0.2);
+      border-radius: var(--radius); padding: 56px;
+      text-align: center; margin-bottom: 96px;
+    }
+    .sroi-callout .big-num {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--sky) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    .sroi-callout .big-label { font-size: 1.1rem; color: var(--muted); margin-top: 12px; margin-bottom: 8px; }
+    .sroi-callout .big-source { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: linear-gradient(135deg, var(--deep) 0%, var(--navy) 100%);
+      border-top: 1px solid var(--border);
+      text-align: center; padding: 96px 24px;
+    }
+    .cta-section h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 16px; }
+    .cta-section p { color: var(--muted); font-size: 1.1rem; margin-bottom: 40px; max-width: 580px; margin-left: auto; margin-right: auto; }
+    .cta-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; margin: 0 auto 48px; }
+    .cta-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px 24px;
+      text-align: left;
+    }
+    .cta-card-role { font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--teal); font-weight: 700; margin-bottom: 10px; }
+    .cta-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .cta-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--deep); border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-brand { font-weight: 700; }
+    .footer-brand span { color: var(--teal); }
+    .footer-powered {
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .footer-powered strong { color: var(--white); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; }
+    .footer-links a:hover { color: var(--white); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .how-grid, .health-grid, .platforms-grid { grid-template-columns: 1fr; }
+      .audience-panel.active { grid-template-columns: 1fr; }
+      .data-grid { grid-template-columns: 1fr; }
+      .loop-diagram { grid-template-columns: 1fr; }
+      .loop-arrow { transform: rotate(90deg); }
+      .cta-cards { grid-template-columns: 1fr; }
+      .sroi-callout { padding: 40px 24px; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Eco<span>Index</span></div>
+  <div class="nav-links">
+    <a href="#audience">Who It's For</a>
+    <a href="#how">How It Works</a>
+    <a href="#health">Why It Matters</a>
+    <a href="#platforms">Platforms</a>
+    <a href="#data">The Data</a>
+  </div>
+  <a href="#cta" class="nav-cta">Get Involved</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-badge">Powered by Open Science · Built for Aotearoa</div>
+  <h1>Empowering people to create a<br/><em>thriving planet for all.</em></h1>
+  <p class="hero-sub">
+    EcoIndex puts the science of ecological restoration in the hands of students,
+    farmers, communities, and decision-makers — showing exactly where to act,
+    what to plant, what it's worth, and whether it worked.
+  </p>
+  <div class="hero-actions">
+    <a href="#audience" class="btn-primary">See How It Works for You</a>
+    <a href="index.html" class="btn-ghost">View the Live Map →</a>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">6.8M</div>
+    <div class="stat-label">hectares of Aotearoa analysed</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">10×10m</div>
+    <div class="stat-label">precision — every pixel scored</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">$11.20</div>
+    <div class="stat-label">social return per $1 invested</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">23</div>
+    <div class="stat-label">ecosystem services valued in NZD</div>
+  </div>
+</div>
+
+<!-- AUDIENCE SELECTOR -->
+<section class="audience-section" id="audience">
+  <div class="container">
+    <div class="section-label">Who It's For</div>
+    <h2 class="section-title">Built for every decision-maker</h2>
+    <p class="section-sub">
+      Whether you hold policy, a classroom, a farm, or a budget — EcoIndex gives you
+      the specific evidence and tools to take meaningful action.
+    </p>
+
+    <div class="audience-tabs">
+      <button class="tab-btn active" onclick="showTab('politicians')">🏛 Politicians & Policy</button>
+      <button class="tab-btn" onclick="showTab('parents')">👨‍👩‍👧 Parents & Whānau</button>
+      <button class="tab-btn" onclick="showTab('schools')">🏫 Schools & Kura</button>
+      <button class="tab-btn" onclick="showTab('orgs')">🏢 Organisations & Business</button>
+      <button class="tab-btn" onclick="showTab('farmers')">🌱 Farmers & Landowners</button>
+      <button class="tab-btn" onclick="showTab('iwi')">🌿 Iwi & Hapū</button>
+    </div>
+
+    <!-- POLITICIANS -->
+    <div class="audience-panel active" id="tab-politicians">
+      <div class="audience-text">
+        <h3>Turn policy into measurable outcomes</h3>
+        <p>Every biodiversity target, freshwater standard, and climate commitment your government has made can now be tracked at catchment scale — and acted on by the communities who live there.</p>
+        <ul class="audience-points">
+          <li><div class="point-icon">📍</div><span>Map exactly which catchments are below the 15% native cover threshold that triggers accelerating species loss — and prioritise investment accordingly.</span></li>
+          <li><div class="point-icon">💰</div><span>Justify nature-based investment with NZD valuations for 23 ecosystem services — flood prevention, carbon, water purification, pollination — per hectare, per region.</span></li>
+          <li><div class="point-icon">📊</div><span>Move beyond annual reports. Track restoration progress in near real-time using satellite AI detection of new vegetation across the country.</span></li>
+          <li><div class="point-icon">🤝</div><span>Empower communities, schools, and landowners to become active restoration partners — reducing the cost to government while deepening civic ownership.</span></li>
+        </ul>
+      </div>
+      <div class="audience-visual">
+        <div class="audience-visual-title">National Restoration Metrics</div>
+        <div class="progress-bar-wrap">
+          <div class="progress-label"><span>Catchments below 15% native cover</span><span>68%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:68%; background: linear-gradient(90deg, #f5c842, #e53935);"></div></div>
+        </div>
+        <br/>
+        <div class="metric-row"><span class="metric-label">Restoration investment ROI</span><span class="metric-value">$11.20 per $1</span></div>
+        <div class="metric-row"><span class="metric-label">Hectares requiring action (NZ)</span><span class="metric-value">~4.2M ha</span></div>
+        <div class="metric-row"><span class="metric-label">Species loss acceleration below 15%</span><span class="metric-value">Rapid</span></div>
+        <div class="metric-row"><span class="metric-label">Communities that can be activated</span><span class="metric-value">Every school</span></div>
+      </div>
+    </div>
+
+    <!-- PARENTS -->
+    <div class="audience-panel" id="tab-parents">
+      <div class="audience-text">
+        <h3>Give your children agency over their world</h3>
+        <p>Every parent wants their child to grow up healthy, connected, and capable. EcoIndex gives young people real tools to understand — and improve — the environment they'll inherit.</p>
+        <ul class="audience-points">
+          <li><div class="point-icon">🌳</div><span>Urban tree canopy directly reduces childhood asthma, heat stress, and anxiety. Your neighbourhood's cover level affects your family's health today.</span></li>
+          <li><div class="point-icon">🎮</div><span>Through the Craffft platform, tamariki restore historically accurate native ecosystems in Minecraft — using real science, real coordinates, real species.</span></li>
+          <li><div class="point-icon">🗺</div><span>Students can see their local catchment on the map, identify the 3 spots that matter most, and take a quest to restore them — from school or at home.</span></li>
+          <li><div class="point-icon">🐦</div><span>When young people plant in the real world, satellite AI eventually confirms it happened. Their name is on a real contribution to a thriving Aotearoa.</span></li>
+        </ul>
+      </div>
+      <div class="audience-visual">
+        <div class="audience-visual-title">What Your Neighbourhood Looks Like</div>
+        <div class="progress-bar-wrap">
+          <div class="progress-label"><span>Native cover — average NZ urban catchment</span><span>6%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:6%; background: linear-gradient(90deg, #e53935, #f5c842);"></div></div>
+        </div>
+        <div class="progress-bar-wrap" style="margin-top:16px;">
+          <div class="progress-label"><span>Target for biodiversity to thrive</span><span>15%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:15%; background: linear-gradient(90deg, #00c896, #4fc3f7);"></div></div>
+        </div>
+        <br/>
+        <div class="metric-row"><span class="metric-label">Reduced asthma risk with 30%+ urban canopy</span><span class="metric-value">Up to 25%</span></div>
+        <div class="metric-row"><span class="metric-label">Heat reduction from native planting</span><span class="metric-value">2–8°C</span></div>
+        <div class="metric-row"><span class="metric-label">Student wellbeing increase (nature exposure)</span><span class="metric-value">Significant</span></div>
+      </div>
+    </div>
+
+    <!-- SCHOOLS -->
+    <div class="audience-panel" id="tab-schools">
+      <div class="audience-text">
+        <h3>Turn your curriculum into systems change</h3>
+        <p>EcoIndex and Craffft give teachers and principals a complete learning framework that connects science, maths, geography, and te ao Māori to real restoration action in the student's own catchment.</p>
+        <ul class="audience-points">
+          <li><div class="point-icon">🧭</div><span>Each school's catchment is automatically scored — showing students exactly how much native cover they need and which ecosystems belong there.</span></li>
+          <li><div class="point-icon">⛏</div><span>Minecraft quests are built on real GIS data: students reconstruct historically accurate forests block by block, learning ecology through doing.</span></li>
+          <li><div class="point-icon">📡</div><span>Real-world planting quests connect the classroom to the land — GPS-logged, satellite-verified, and displayed on the national restoration map.</span></li>
+          <li><div class="point-icon">🏆</div><span>Catchment leaderboards let schools compete on restoration progress — the ultimate authentic assessment.</span></li>
+        </ul>
+      </div>
+      <div class="audience-visual">
+        <div class="audience-visual-title">Learning Outcomes Unlocked</div>
+        <div class="metric-row"><span class="metric-label">Curriculum areas covered</span><span class="metric-value">Science, Maths, Social Studies, Te Reo</span></div>
+        <div class="metric-row"><span class="metric-label">Quest types available</span><span class="metric-value">Virtual + Real-world</span></div>
+        <div class="metric-row"><span class="metric-label">Data resolution students work with</span><span class="metric-value">10×10m precision</span></div>
+        <div class="metric-row"><span class="metric-label">Verification method</span><span class="metric-value">AI satellite detection</span></div>
+        <div class="metric-row"><span class="metric-label">Partner organisations</span><span class="metric-value">Eco-index, Trees That Count, DOC</span></div>
+      </div>
+    </div>
+
+    <!-- ORGS -->
+    <div class="audience-panel" id="tab-orgs">
+      <div class="audience-text">
+        <h3>Measure your environmental impact with precision</h3>
+        <p>Corporate sustainability reporting is evolving fast. EcoIndex gives organisations the spatial intelligence to move beyond offsets and into verified, location-specific restoration — with the financial metrics to prove it.</p>
+        <ul class="audience-points">
+          <li><div class="point-icon">📈</div><span>Every planting sponsored by your organisation is scored by the Navigator system — showing the ecological ROI of each hectare restored in your region.</span></li>
+          <li><div class="point-icon">💵</div><span>The Ecosystem Services Valuer calculates NZD value of flood prevention, carbon, water quality, and biodiversity generated by your investment.</span></li>
+          <li><div class="point-icon">🛰</div><span>Satellite AI independently verifies restoration outcomes — giving your ESG reporting independent, science-grade verification.</span></li>
+          <li><div class="point-icon">🎓</div><span>Brand your restoration as a Craffft quest — young people in your region complete it, creating measurable community engagement alongside ecological impact.</span></li>
+        </ul>
+      </div>
+      <div class="audience-visual">
+        <div class="audience-visual-title">Sample Corporate Impact Dashboard</div>
+        <div class="metric-row"><span class="metric-label">Hectares restored (sponsored)</span><span class="metric-value">42 ha</span></div>
+        <div class="metric-row"><span class="metric-label">Ecosystem services value generated</span><span class="metric-value">$318,000/yr</span></div>
+        <div class="metric-row"><span class="metric-label">Carbon sequestration</span><span class="metric-value">210 tCO₂e/yr</span></div>
+        <div class="metric-row"><span class="metric-label">Students engaged in restoration quests</span><span class="metric-value">1,240</span></div>
+        <div class="metric-row"><span class="metric-label">Independent satellite verification</span><span class="metric-value">✓ Confirmed</span></div>
+      </div>
+    </div>
+
+    <!-- FARMERS -->
+    <div class="audience-panel" id="tab-farmers">
+      <div class="audience-text">
+        <h3>Restoration as a competitive advantage</h3>
+        <p>Freshwater regulations are tightening. EcoIndex doesn't just show farmers what's required — it shows exactly where to plant for the maximum reduction in nitrate runoff, at the lowest cost per hectare.</p>
+        <ul class="audience-points">
+          <li><div class="point-icon">🌊</div><span>Riparian scoring (A06) identifies the exact 30m strips along your waterways where native planting delivers the highest water quality benefit.</span></li>
+          <li><div class="point-icon">💸</div><span>Reconstruction and maintenance cost layers give you a budget estimate before you commit — and the ESV shows what those plantings will be worth in 20 years.</span></li>
+          <li><div class="point-icon">🐄</div><span>Integration with AgHub turns compliance recording into proactive advisory — turning your farm map into a live restoration plan.</span></li>
+          <li><div class="point-icon">🗂</div><span>Documented, spatially verified plantings build a credible sustainability story for your supply chain, co-op, and regional council.</span></li>
+        </ul>
+      </div>
+      <div class="audience-visual">
+        <div class="audience-visual-title">Farm Restoration Analysis</div>
+        <div class="metric-row"><span class="metric-label">Riparian planting priority zones</span><span class="metric-value">Auto-identified</span></div>
+        <div class="metric-row"><span class="metric-label">Average nitrate reduction (riparian buffer)</span><span class="metric-value">40–70%</span></div>
+        <div class="metric-row"><span class="metric-label">Cost per hectare (planting + fencing)</span><span class="metric-value">From $4,200/ha</span></div>
+        <div class="metric-row"><span class="metric-label">Ecosystem services value at 20 years</span><span class="metric-value">$8,400/ha</span></div>
+        <div class="metric-row"><span class="metric-label">Compliance risk reduction</span><span class="metric-value">Significant</span></div>
+      </div>
+    </div>
+
+    <!-- IWI -->
+    <div class="audience-panel" id="tab-iwi">
+      <div class="audience-text">
+        <h3>Kaitiakitanga backed by data</h3>
+        <p>EcoIndex was built with Māori data sovereignty at its core. For iwi and hapū, the platform provides the spatial intelligence to exercise kaitiakitanga with scientific rigour — on your terms.</p>
+        <ul class="audience-points">
+          <li><div class="point-icon">🌿</div><span>The Ecosystem Projector shows which native ecosystems historically thrived in your rohe — providing a science-backed baseline for restoration planning.</span></li>
+          <li><div class="point-icon">💧</div><span>Catchment-to-sea analysis connects decisions made on whenua to the health of awa and moana — supporting integrated resource management.</span></li>
+          <li><div class="point-icon">📋</div><span>Spatially verified restoration outcomes support Treaty settlement negotiations, RMA applications, and co-governance arrangements with hard evidence.</span></li>
+          <li><div class="point-icon">🎓</div><span>Craffft quests can be built in te reo Māori, incorporating mātauranga Māori alongside western ecological science — under your guidance.</span></li>
+        </ul>
+      </div>
+      <div class="audience-visual">
+        <div class="audience-visual-title">Rohe Restoration Intelligence</div>
+        <div class="metric-row"><span class="metric-label">Historical ecosystem mapping</span><span class="metric-value">National coverage</span></div>
+        <div class="metric-row"><span class="metric-label">Catchment-to-sea tracing</span><span class="metric-value">96 sea-draining catchments</span></div>
+        <div class="metric-row"><span class="metric-label">Data governance</span><span class="metric-value">CARE + FAIR principles</span></div>
+        <div class="metric-row"><span class="metric-label">NZ-hosted data processing</span><span class="metric-value">✓ Onshore only</span></div>
+        <div class="metric-row"><span class="metric-label">Te reo Māori quest support</span><span class="metric-value">Available</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">From data to action in five steps</h2>
+    <p class="section-sub">EcoIndex closes the loop between world-class ecological science and real people making real change on real land.</p>
+
+    <div style="max-width:900px; margin:0 auto 56px;">
+      <div class="loop-diagram">
+        <div class="loop-step">
+          <div class="loop-step-icon">🗺</div>
+          <div class="loop-step-title">Discover</div>
+          <div class="loop-step-sub">Navigator scores every 10×10m pixel in your catchment</div>
+        </div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step">
+          <div class="loop-step-icon">🎯</div>
+          <div class="loop-step-title">Target</div>
+          <div class="loop-step-sub">Highest-ROI restoration spots identified automatically</div>
+        </div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step">
+          <div class="loop-step-icon">🌱</div>
+          <div class="loop-step-title">Act</div>
+          <div class="loop-step-sub">Students, farmers & communities plant the right species in the right place</div>
+        </div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step">
+          <div class="loop-step-icon">🛰</div>
+          <div class="loop-step-title">Verify</div>
+          <div class="loop-step-sub">AI satellite detection confirms new vegetation growth</div>
+        </div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step">
+          <div class="loop-step-icon">💰</div>
+          <div class="loop-step-title">Value</div>
+          <div class="loop-step-sub">ESV calculates NZD ecosystem services generated</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="how-grid">
+      <div class="how-card" data-num="01">
+        <div class="how-icon">🧭</div>
+        <h4>Science-grade precision</h4>
+        <p>Every recommendation is backed by Eco-index's open-source GIS layers — LCDB v5 land cover, potential natural vegetation, DOC reserve buffers, and catchment hydrology — not guesswork.</p>
+      </div>
+      <div class="how-card" data-num="02">
+        <div class="how-icon">🎮</div>
+        <h4>Accessible to everyone</h4>
+        <p>Craffft translates complex spatial science into Minecraft quests. Students aged 10+ engage with real ecosystem data without needing GIS training — then carry those skills into the real world.</p>
+      </div>
+      <div class="how-card" data-num="03">
+        <div class="how-icon">🔄</div>
+        <h4>A living feedback loop</h4>
+        <p>In-stream sensors, UAV imaging, and satellite AI create a ground-truthing loop that keeps the system honest — and gives every action a verified outcome over time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE HEALTHS -->
+<section class="health-section" id="health">
+  <div class="container">
+    <div class="section-label">Why It Matters</div>
+    <h2 class="section-title">One action. Three layers of health.</h2>
+    <p class="section-sub">Restoring native ecosystems isn't just an environmental act. The science is clear: it improves human health, land productivity, and ocean ecosystems — simultaneously.</p>
+
+    <div class="health-grid">
+      <div class="health-card personal">
+        <div class="health-emoji">🧬</div>
+        <h3>Personal Health</h3>
+        <p>Urban native canopy reduces heat stress, airborne pollutants, and childhood asthma. Research confirms that regular exposure to native biodiversity strengthens immune function and measurably reduces anxiety and depression in young people.</p>
+        <p>When students restore their neighbourhood, they restore their own biology.</p>
+        <div class="health-fact">Urban tree canopy can reduce local temperatures by up to 8°C and cut respiratory illness rates significantly</div>
+      </div>
+      <div class="health-card land">
+        <div class="health-emoji">🌍</div>
+        <h3>Land Health</h3>
+        <p>Below the 15% native cover threshold, species loss in a catchment accelerates dramatically — and the cost to manage and restore it multiplies. Native root systems stabilise hillsides, rebuild soil microbiome networks, and restore the underground fungi highways that make agriculture sustainable long-term.</p>
+        <div class="health-fact">Dropping below 15% native cover per ecosystem type triggers rapid, compounding biodiversity loss — Eco-index's core finding</div>
+      </div>
+      <div class="health-card ocean">
+        <div class="health-emoji">🌊</div>
+        <h3>Ocean Health</h3>
+        <p>Every catchment in Aotearoa drains to the sea. Riparian planting within 30m of waterways reduces nitrate and sediment runoff by 40–70% — directly improving the water quality of streams, rivers, harbours, and ultimately the ocean. What students plant on a hillside shows up at the beach within years.</p>
+        <div class="health-fact">Riparian buffers can reduce nitrate runoff by 40–70%, with measurable downstream impact reaching coastal waters</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORMS -->
+<section id="platforms">
+  <div class="container">
+    <div class="section-label">The Platforms</div>
+    <h2 class="section-title">One data layer. Three entry points.</h2>
+    <p class="section-sub">Whether the user is 10 years old or managing 1,000 hectares, EcoIndex spatial intelligence powers the right experience for them.</p>
+
+    <div class="platforms-grid">
+      <div class="platform-card">
+        <div class="platform-tag tag-students">Students & Schools</div>
+        <h3>Craffft</h3>
+        <p>Game-based learning platform that transforms real NZ catchments into Minecraft worlds. Students rebuild historically accurate ecosystems guided by live Eco-index data.</p>
+        <ul class="platform-features">
+          <li>Real GIS data → Minecraft quests</li>
+          <li>Historically accurate native ecosystems</li>
+          <li>Real-world planting verification</li>
+          <li>Catchment leaderboards</li>
+          <li>Te reo Māori quest support</li>
+        </ul>
+      </div>
+      <div class="platform-card">
+        <div class="platform-tag tag-farmers">Farmers & Land Managers</div>
+        <h3>AgHub</h3>
+        <p>Proactive restoration advisory platform for landowners. Turns compliance recording into intelligent restoration planning using the same Eco-index spatial engine.</p>
+        <ul class="platform-features">
+          <li>Auto-identifies bio-filter locations</li>
+          <li>Freshwater compliance pathways</li>
+          <li>Cost-benefit per hectare</li>
+          <li>ESV financial reporting</li>
+          <li>Integration with regional councils</li>
+        </ul>
+      </div>
+      <div class="platform-card">
+        <div class="platform-tag tag-industry">Corporate & Industry</div>
+        <h3>Live Farm Digital Twin</h3>
+        <p>Unreal Engine 5 digital twin of real properties — integrating live IoT sensor data, Eco-index spatial layers, and restoration quest mechanics for landowners and industry partners.</p>
+        <ul class="platform-features">
+          <li>1:1 height-accurate 3D terrain</li>
+          <li>Live IoT sensor integration</li>
+          <li>VR walkthrough ready</li>
+          <li>Eco-index overlays in 3D</li>
+          <li>Staff onboarding + operations</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA LAYER -->
+<section class="data-section" id="data">
+  <div class="container">
+    <div class="data-grid">
+      <div>
+        <div class="section-label">The Data</div>
+        <h2 class="section-title">Open science. Built for Aotearoa.</h2>
+        <p class="section-sub" style="margin-bottom:24px;">
+          EcoIndex is built on Eco-index's complete open-access spatial dataset —
+          peer-reviewed, NZ-specific, and covering the full country at 10×10m resolution.
+          CC BY 4.0 licensed. Free forever.
+        </p>
+        <p style="color:var(--muted); font-size:0.9rem; line-height:1.7;">
+          Developed from public investment through the Biological Heritage National Science Challenge,
+          these layers represent decades of ecological science — now available to everyone.
+        </p>
+      </div>
+      <div class="data-layers">
+        <div class="data-layer">
+          <div class="layer-dot" style="background:#00c896;"></div>
+          <div><div class="layer-name">Navigator Scoring (A01–A10)</div><div class="layer-desc">10 ecological criteria scored per 10×10m pixel</div></div>
+          <div class="layer-res">10m</div>
+        </div>
+        <div class="data-layer">
+          <div class="layer-dot" style="background:#4fc3f7;"></div>
+          <div><div class="layer-name">Ecosystem Projector</div><div class="layer-desc">Historical native ecosystems per catchment</div></div>
+          <div class="layer-res">National</div>
+        </div>
+        <div class="data-layer">
+          <div class="layer-dot" style="background:#f5c842;"></div>
+          <div><div class="layer-name">Land Cover Snapshot</div><div class="layer-desc">Current land use from LCDB v5</div></div>
+          <div class="layer-res">National</div>
+        </div>
+        <div class="data-layer">
+          <div class="layer-dot" style="background:#ab47bc;"></div>
+          <div><div class="layer-name">Ecosystem Services Valuer</div><div class="layer-desc">NZD value of 23 services across 33 ecosystems</div></div>
+          <div class="layer-res">National</div>
+        </div>
+        <div class="data-layer">
+          <div class="layer-dot" style="background:#ef5350;"></div>
+          <div><div class="layer-name">15% Cover Goal</div><div class="layer-desc">Catchments below biodiversity viability threshold</div></div>
+          <div class="layer-res">96 catchments</div>
+        </div>
+        <div class="data-layer">
+          <div class="layer-dot" style="background:#26a69a;"></div>
+          <div><div class="layer-name">Reconstruction & Maintenance Costings</div><div class="layer-desc">Per-hectare cost estimates for planting projects</div></div>
+          <div class="layer-res">National</div>
+        </div>
+        <div class="data-layer">
+          <div class="layer-dot" style="background:#5c6bc0;"></div>
+          <div><div class="layer-name">Observer AI (Native Forest)</div><div class="layer-desc">UNET satellite detection of native vegetation</div></div>
+          <div class="layer-res">0.1ha+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SROI CALLOUT -->
+<section>
+  <div class="container">
+    <div class="sroi-callout">
+      <div class="big-num">$11.20</div>
+      <div class="big-label">of social, environmental and cultural value returned<br/>for every $1 invested in ecological restoration</div>
+      <div class="big-source">Eco-index Social Return on Investment Analysis (Liminal Engine / Matatihi, 2024–2026) · 20-year projection</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <h2>The planet doesn't wait.<br/>Neither should we.</h2>
+  <p>EcoIndex is open. The science is ready. The only missing ingredient is people deciding to act — at every level.</p>
+
+  <div class="cta-cards">
+    <div class="cta-card">
+      <div class="cta-card-role">For Decision Makers</div>
+      <h4>Back the infrastructure</h4>
+      <p>EcoIndex needs policy support, curriculum integration, and public investment to scale. The tools exist — we need the mandate.</p>
+    </div>
+    <div class="cta-card">
+      <div class="cta-card-role">For Organisations</div>
+      <h4>Sponsor a catchment</h4>
+      <p>Fund restoration quests in your region. Get satellite-verified outcomes, ESV-calculated ROI, and genuine community engagement.</p>
+    </div>
+    <div class="cta-card">
+      <div class="cta-card-role">For Schools & Whānau</div>
+      <h4>Start a quest</h4>
+      <p>Join the Craffft platform. Your catchment is already mapped. The next generation is ready to restore it — give them the chance.</p>
+    </div>
+  </div>
+
+  <a href="index.html" class="btn-primary" style="font-size:1.1rem; padding:18px 40px;">Explore the Live Map →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Eco<span>Index</span></div>
+  <div class="footer-powered">Powered by <strong>Eco-index open-access data</strong> · CC BY 4.0 · Built by Craffft / Rad Kiwi</div>
+  <div class="footer-links">
+    <a href="https://eco-index.nz" target="_blank">Eco-index.nz</a>
+    <a href="https://github.com/Radkiwi/EcoIndex" target="_blank">GitHub</a>
+    <a href="index.html">Live Map</a>
+  </div>
+</footer>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.audience-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  // Animate stat numbers on scroll
+  const statNums = document.querySelectorAll('.stat-num');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.style.opacity = '1';
+    });
+  }, { threshold: 0.1 });
+  statNums.forEach(n => { n.style.opacity = '0'; n.style.transition = 'opacity 0.6s'; observer.observe(n); });
+
+  // Smooth card entrance
+  const cards = document.querySelectorAll('.how-card, .health-card, .platform-card, .data-layer');
+  const cardObserver = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => {
+          e.target.style.opacity = '1';
+          e.target.style.transform = e.target.style.transform.replace('translateY(20px)', 'translateY(0)');
+        }, 80 * (Array.from(cards).indexOf(e.target) % 4));
+      }
+    });
+  }, { threshold: 0.1 });
+  cards.forEach(c => {
+    c.style.opacity = '0';
+    c.style.transform = 'translateY(20px)';
+    c.style.transition = 'opacity 0.5s, transform 0.5s';
+    cardObserver.observe(c);
+  });
+</script>
+</body>
+</html>
