@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Eco-index Ecosystem Restoration Map - Version 2.0</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <!-- problematic css-->
+    <!-- link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+</head>
+
+<!-- <body id="collection-666621d7f7f6f644548a71dd"> -->
+
+<body>
+    <div id="navigator-embed">
+        <!-- Disclaimer overlay and popup -->
+        <div id="overlay"></div>
+
+        <!-- Reconstruction Scale -->
+        <div id="scale-container" class="reset">
+            <div class="legend-header">
+                <p><b>Reconstruction Priority</b></p>
+                <button id="toggle-scale-container" class="toggle-button"><i class="fas fa-minus"></i></button>
+            </div>
+            <div id="scale-container-content">
+                <div id="reconstructionScale" class="scale">
+                    <div id="entry" style="display: flex; align-items: center;">
+                        <div id="colorScale" style="margin-left: 0px;">
+                            <canvas id="reconstructionCanvas" width="20" height="100"></canvas>
+                        </div>
+                        <div id="labelsContainer"
+                            style="display: flex; flex-direction: column; justify-content: space-between; height: 100px;">
+                            <div style="margin-left: 5px;">Very high</div>
+                            <div style="margin-left: 5px;">Minimal</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actual map object -->
+        <div id='map'></div>
+
+        <!-- Full screen button -->
+        <div><button id="fullscreen-btn"><i class="fas fa-expand"></i></button></div>
+
+        <!-- Legend for showing/hiding individual component layers -->
+        <div id='legend'>
+            <div class="legend-header">
+                <p><b>Control Panel</b></p>
+                <button id="toggle-legend" class="toggle-button"><i class="fas fa-minus"></i></button>
+            </div>
+            <div id="legend-content">
+                <div>
+                    <div class="legend-item">
+                        <input type='checkbox' id='togglerestorationprioritylevels' checked>
+                        <label for='togglerestorationprioritylevels'>Ecosystem Reconstruction Priority Levels</label>
+                        <i class="fas fa-info-circle info-icon" data-icon-id="restoration"></i>
+                    </div>
+                    <div class="legend-item">
+                        <input type='checkbox' id='toggleexpectednaturalrangeofecosystems'>
+                        <label for='toggleexpectednaturalrangeofecosystems'>Projected Native Ecosystems</label>
+                        <i class="fas fa-info-circle info-icon" data-icon-id="ecosystems"></i>
+                    </div>
+                    <div class="legend-item">
+                        <input type='checkbox' id='togglecosts_per_catchment'>
+                        <label for='togglecosts_per_catchment'>Estimated Catchment Reconstruction Costs</label>
+                        <i class="fas fa-info-circle info-icon" data-icon-id="costs"></i>
+                    </div>
+                    <div class="legend-options-divider"></div>
+                    <div class="legend-item">
+                        <input type='checkbox' id='toggleecoindexcatchments' checked>
+                        <label for='toggleecoindexcatchments'>Eco-index Catchments</label>
+                        <i class="fas fa-info-circle info-icon" data-icon-id="catchments"></i>
+                    </div>
+                    <div class="legend-options-divider"></div>
+                    <div class="legend-item">
+                        <input type='checkbox' id='toggleiwiareasofinterest'>
+                        <label for='toggleiwiareasofinterest'>Iwi Areas of Interest from Te Puni Kōkiri</label>
+                        <i class="fas fa-info-circle info-icon" data-icon-id="iwi"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Icon Popup -->
+        <div id="info-popup" class="info-popup">
+            <div class="info-popup-content">
+                <div id="info-popup-text"></div> <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+
+    <script src='./app.js'></script>
+</body>
+
+</html>

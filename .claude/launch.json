@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Craffft Fog Map (dev)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "Craffft Fog Map (production)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start"],
+      "port": 3000
+    },
+    {
+      "name": "Assign tiles (one-off script)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/assignTiles.js"],
+      "port": 3000
+    }
+  ]
+}

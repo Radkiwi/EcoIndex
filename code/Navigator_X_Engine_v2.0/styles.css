@@ -1,0 +1,340 @@
+a {
+    text-decoration: underline;
+}
+
+#navigator-embed {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+#control-panel {
+    position: absolute;
+    background: rgb(255, 255, 255);
+    border-radius: 10px;
+    top: 15px;
+    left: 10px;
+    padding: 10px;
+    z-index: 1000;
+    width: 347px;
+}
+
+.legend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.legend-header p {
+    margin-top: 10px;
+    margin-bottom:16px;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+
+
+.toggleAllContainer {
+    border-bottom: 1px solid #ddd;
+    /* margin-right: -10px; */
+    display: inline-block; /* or inline-flex */
+    z-index: 1000;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+}
+
+.tab {
+    box-shadow: inset 0px -10px 10px -10px rgba(0, 0, 0, 0.15);
+
+    overflow: hidden;
+    background-color: #f1f1f1;
+    /* background: linear-gradient(to bottom, white 0%, white 50%, #f1f1f1 100%); */
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    justify-content: center; /* Centers the buttons horizontally */
+    align-items: center; /* Vertically aligns the buttons */
+    /* gap: 10px; */
+
+}
+
+.tab button {
+    background-color: #f1f1f1;
+    box-shadow: inset 0px -10px 10px -10px rgba(0, 0, 0, 0.15);
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    justify-content: space-between; /* Evenly distributes the elements */
+    align-items: center; /* Vertically aligns the items within the container */
+    width:40%;
+    height: 65px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    /* border-radius: 8px; */
+    cursor: pointer;
+    margin:10px;
+    margin-bottom: 0px;
+    border: 1px solid #f1f1f1;
+    border-bottom: none;
+    /* transition: background-color 0.3s ease;  */
+}
+
+#control-panel-content{
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.tab button:hover {
+    box-shadow: none;
+    background-color: #ffffff;
+}
+
+
+.tab button.active {
+    background-color: #ffffff;
+    background: white;
+    box-shadow: none;
+}
+
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #f1f1f1;
+    border-top: none;
+    font-size: 13px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.tabcontent div {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.tabcontent input[type='checkbox'] {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.tabcontent label {
+    display: inline-block;
+    margin-left: 5px;
+    vertical-align: middle;
+    /* Ensure label takes up the space needed, but not more */
+}
+
+.tabcontent .info-icon {
+    position: absolute;
+    right: 0px; /* Adjust to align properly */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #7c7c7c; /* Blue color */
+}
+
+.info-icon {
+    position: absolute;
+    right: 0px; /* Adjust to align properly */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #7c7c7c; /* Blue color */
+}
+
+/* Popup container */
+.popup {
+    display: none; /* Hidden by default */
+    position: absolute; /* Positioned relative to the clicked icon */
+    background-color: white;
+    border: 1px solid #c9c9c9;
+    border-radius: 8px;
+    max-width: 500px;
+    box-shadow: 0 2px 15px rgba(0,0,0,.2);
+    z-index: 1004;
+}
+
+.popup-content {
+    padding: 10px;
+}
+
+.popup-content p {
+    margin: 2px 0; /* Reduce vertical margin between paragraphs */
+}
+
+.popup-title {
+    color: green;
+    font-weight: bold;
+}
+
+#tab-reconstruction.defaultOpen, #tab-reconstruction.defaultOpen {
+    display: block;
+}
+
+#scale-container {
+    position: absolute;
+    background: white;
+    border-radius: 10px;
+    top: 15px;
+    right: 10px;
+    z-index: 1000;
+    padding: 10px;
+    width: 200px;
+}
+
+.ena-legend {
+    position: absolute;
+    top: 270px;
+    right: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    z-index: 1000;
+    display: none;
+    width: 263px;
+}
+
+.ena-legend-item {
+    display: flex;
+    align-items: center;  /* Vertically center both text and icon */
+}
+
+.ena-legend-text {
+    flex-grow: 1;
+    text-align: left;
+    padding:5px;
+}
+
+.legend-info-icon {
+    margin-left: 8px;  
+    color: #7c7c7c;   
+    cursor: pointer; 
+}
+.ena-legend-color { width: 20px; height: 10px; margin-right: 5px; border-radius: 3px;}
+
+/* popup css */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* semi-transparent black */
+    z-index: 990;
+    display: none;
+    pointer-events: none;
+}
+
+#disclaimer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1003;
+    display: none;
+    max-width: 90%; /* Set maximum width to 90% of the viewport width */
+    max-height: 90%; /* Set maximum height to 90% of the viewport height */
+    overflow: auto; /* Enable scrolling if content overflows */
+}
+
+#disclaimer-content {
+    text-align: left;
+    line-height: 1.1;
+}
+
+#disclaimer-content h4,
+#disclaimer-content h2 {
+    line-height: 1; /* Adjust as needed */
+    margin-bottom:5px;
+    text-align: center
+}
+#disclaimer-content h2 {
+    margin: 0 0 25px 0;
+}
+#disclaimer-content p {
+    font-size: 12px;
+}
+#disclaimer-content li {
+    font-size: 12px;
+    margin: 5px 0;
+}
+.disclaimer-subtext {
+    font-size: 10px;
+    margin-top: 2px;
+}
+#disclaimer button {
+    margin: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: calc(50% - 20px); /* Set the button width to half of the popup width, minus the margin */
+}
+#disclaimer-buttons {
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center the buttons horizontally */
+}
+
+#accept-btn {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    margin-right: 10px;;
+}
+
+#decline-btn {
+    background-color: #f44336; /* Red */
+    color: white;
+}
+
+#fullscreen-btn {
+    position: absolute;
+    bottom: 25px;
+    right: 10px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    z-index: 999;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+#fullscreen-btn:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Set Squarespace code block width, needs to be manually updated from the squarespace page*/
+.fe-6731909e1a3d593bb7e729a2 { 
+    max-width: calc(100% - 60px); /* Adjust the width as needed */
+    margin: 0 auto; /* Center the div horizontally */
+}

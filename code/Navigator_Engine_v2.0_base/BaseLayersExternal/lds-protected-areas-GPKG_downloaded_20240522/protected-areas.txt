@@ -1,0 +1,322 @@
+
+/* Search Bar */
+#searchQuery {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #0073e6;
+    border-radius: 25px;
+    outline: none;
+    transition: 0.3s;
+}
+
+/* Search Bar Hover & Focus */
+#searchQuery:focus {
+    border-color: #005bb5;
+    box-shadow: 0 0 10px rgba(0, 115, 230, 0.3);
+}
+
+/* Search Button */
+button {
+    margin-top: 10px;
+    padding: 12px 20px;
+    background-color: #0073e6;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Button Hover Effect */
+button:hover {
+    background-color: #005bb5;
+}
+
+/* Search Results Styling */
+#searchResults {
+    margin-top: 20px;
+}
+
+#searchResults p {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+#searchResults a {
+    color: #0073e6;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#searchResults a:hover {
+    text-decoration: underline;
+}
+
+
+
+
+
+//ORIGINAL
+<input type="text" id="searchQuery" placeholder="Search this site..." />
+<button onclick="searchSite()">Search</button>
+<div id="searchResults"></div>
+
+<script>
+function searchSite() {
+    let query = document.getElementById('searchQuery').value;
+    let apiKey = 'AIzaSyAIRqPC2ix4LVG6-4VJSnPAFbrwE1g7IaE';  // Replace with your API Key
+    let cx = 'f2b0b56e175284168';    // Replace with your Search Engine ID
+    let url = `https://www.googleapis.com/customsearch/v1?q=${query}&key=${apiKey}&cx=${cx}`;
+
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        let resultsDiv = document.getElementById('searchResults');
+        resultsDiv.innerHTML = "";
+        data.items.forEach(item => {
+            resultsDiv.innerHTML += `<p><a href="${item.link}">${item.title}</a><br>${item.snippet}</p>`;
+        });
+    })
+    .catch(error => console.error('Error fetching search results:', error));
+}
+</script>
+
+
+
+
+
+
+function searchSite() {
+    let query = document.getElementById('searchQuery').value;
+    let apiKey = 'AIzaSyAIRqPC2ix4LVG6-4VJSnPAFbrwE1g7IaE';  // Replace with your API Key
+    let cx = 'f2b0b56e175284168';    // Replace with your Search Engine ID
+    let url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${apiKey}&cx=${cx}`;
+
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        let resultsDiv = document.getElementById('searchResults');
+        resultsDiv.innerHTML = "";
+
+        if (data.items) {
+            let displayedResults = data.items.slice(0, 3); // Show only top 3
+            displayedResults.forEach(item => {
+                resultsDiv.innerHTML += `<p><a href="${item.link}" target="_blank">${item.title}</a><br>${item.snippet}</p>`;
+            });
+
+            // If there are more results, add "View All Results" link
+            if (data.items.length > 3) {
+                let searchResultsPage = `/search-results?q=${encodeURIComponent(query)}`;
+                resultsDiv.innerHTML += `<p><a href="${searchResultsPage}" class="view-all-results">View All Results</a></p>`;
+            }
+        } else {
+            resultsDiv.innerHTML = "<p>No results found.</p>";
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching search results:', error);
+        document.getElementById('searchResults').innerHTML = "<p>An error occurred. Please try again later.</p>";
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+html {
+scroll-behavior: smooth;
+}
+#block-d61ffba99d6d6619689b,#block-0f693c467fcc09fc5e77, #block-6903cb88ca2c0b3417a3, #block-yui_3_17_2_1_1736479451812_597915, #block-2a42c2ae56c02697bcef, #block-b6ca55fb35c909b0ddc3, #block-9f6a2ebcbbf25c0bf970, #block-d43f6bb94362f7a78ca6, #block-dc1bafbe884c6010d838, #block-ab65cdd4cf3081c9d2c6, #block-1fc1a1472a1c0d85ae5a, #block-9add2116a7e71033b358, #block-yui_3_17_2_1_1737674553534_893504, #block-355d5fcaf4e7e45f286f,
+#block-4be2d31c963e1bcf4ecd,
+#block-8b07f5064035bf7c1fcc,
+#block-3faab83f5e60453c84f3,
+#block-5e883454c8ac2317e343,
+#block-30057a6a659493de1ae1 {
+  border: 6px solid #FFFFFF; 
+}
+#block-7d11c2823ab5e13fd9aa, #block-yui_3_17_2_1_1741120511060_378290  {
+  border: 6px solid #093e44; 
+}
+
+
+/* Style the search bar container */
+#searchContainer {
+    display: flex;  /* Use Flexbox */
+    align-items: center;  /* Vertically center elements */
+    max-width: 400px; /* Adjust width as needed */
+    margin: 0 auto;  /* Center horizontally */
+    border-radius: 5px; /* Rounded edges */
+    overflow: hidden; /* Prevent button from overflowing */
+    background-color: #8e9fb4; /* Mountain Stone background */
+}
+
+/* Style the search input field */
+#searchQuery {
+    flex: 1;  /* Take up remaining space */
+    background-color: transparent; /* No background */
+    color: white;  /* Text color */
+    padding: 10px;
+    font-size: 16px;
+    border: none; /* Remove border */
+    outline: none; /* Remove focus outline */
+}
+
+/* Placeholder text color */
+#searchQuery::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Style the search button */
+#searchContainer button {
+    background-color: #6b7c91; /* Slightly darker Mountain Stone */
+    color: white;
+    border: none; /* Remove border */
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Hover effect for button */
+#searchContainer button:hover {
+    background-color: #546477; /* Darker hover shade */
+}
+
+
+
+
+
+/* Force search result title color */
+.gs-title, 
+.gs-title * {
+    color: #093e44 !important;  /* Pounamu Jade color */
+    font-weight: bold !important;  
+    text-decoration: none !important;  
+}
+
+/* Force hover effect */
+.gs-title:hover, 
+.gs-title:hover * {
+    color: #062a30 !important;  /* Darker shade of Pounamu Jade */
+    text-decoration: underline !important;
+}
+
+/* Additional deep targeting for Google CSE */
+.gs-webResult a.gs-title, 
+.gs-webResult a.gs-title b {
+    color: #093e44 !important; 
+}
+
+.gs-webResult a.gs-title:hover, 
+.gs-webResult a.gs-title:hover b {
+    color: #062a30 !important;
+}
+
+
+/* Force search result titles to be underlined */
+.gs-title, .gs-title * {
+    color: #093e44 !important;  /* Pounamu Jade color */
+    font-weight: bold !important;  
+    text-decoration: underline !important;  /* Force underline */
+}
+
+/* Hover effect for search result titles */
+.gs-title:hover, .gs-title:hover * {
+    color: #062a30 !important; /* Darker Pounamu Jade */
+    text-decoration: underline !important;  /* Keep underline on hover */
+}
+
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    function applyCustomStyles() {
+        let style = document.createElement("style");
+        style.innerHTML = `
+            /* Force search result title color */
+            .gs-title, .gs-title * {
+                color: #093e44 !important;  /* Pounamu Jade color */
+                font-weight: bold !important;
+                text-decoration: none !important;
+            }
+
+            /* Hover effect for titles */
+            .gs-title:hover, .gs-title:hover * {
+                color: #062a30 !important;  /* Darker shade of Pounamu Jade */
+                text-decoration: underline !important;
+            }
+
+            /* Additional deep targeting for Google CSE */
+            .gs-webResult a.gs-title, .gs-webResult a.gs-title b {
+                color: #093e44 !important; 
+            }
+
+            .gs-webResult a.gs-title:hover, .gs-webResult a.gs-title:hover b {
+                color: #062a30 !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Wait a moment for Google CSE to load, then apply styles
+    setTimeout(applyCustomStyles, 2000);
+});
+</script>
+
+
+
+
+
+/* Force search result title color */
+.gs-title,
+.gs-title * {
+    color: #1a0dab !important; /* Google's default dark blue */
+    font-weight: bold !important;
+}
+
+/* Hover effect */
+.gs-title:hover, 
+.gs-title:hover * {
+    color: #551a8b !important; /* Google's hover color */
+    text-decoration: underline !important;
+}
+
+/* Force CSS to override CSE styles */
+body .gsc-webResult .gsc-result .gs-title,
+body .gsc-webResult .gsc-result .gs-title * {
+    color: #1a0dab !important;
+}
+
+/* Force hover effect */
+body .gsc-webResult .gsc-result .gs-title:hover,
+body .gsc-webResult .gsc-result .gs-title:hover * {
+    color: #551a8b !important;
+    text-decoration: underline !important;
+}
+
+.gsc-results .gsc-webResult .gsc-result .gs-title a {
+    color: #3c40a5 !important; /* Converted from HSL */
+}
+
+.gsc-results .gsc-webResult .gsc-result .gs-title a:hover {
+    color: #2c3075 !important; /* Darker shade for hover */
+    text-decoration: underline !important;
+}
+
+
+

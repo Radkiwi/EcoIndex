@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Craffft — Fog of Opportunity</title>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f1923; color: #e0e0e0; display: flex; height: 100vh; overflow: hidden; }
+
+    #map { flex: 1; height: 100vh; }
+
+    #sidebar {
+      width: 300px; min-width: 300px; height: 100vh; overflow-y: auto;
+      background: #1a2433; border-left: 1px solid #2a3a4a; padding: 16px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
+    #sidebar h1 { font-size: 16px; color: #5dd6c8; letter-spacing: 0.05em; }
+    #sidebar h2 { font-size: 12px; text-transform: uppercase; color: #6a8a9a; letter-spacing: 0.08em; margin-top: 8px; }
+
+    .btn {
+      width: 100%; padding: 8px 12px; border: none; border-radius: 6px;
+      cursor: pointer; font-size: 13px; text-align: left;
+      background: #243447; color: #c0d8e0; border: 1px solid #2e4a5a;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #2e4a5a; }
+    .btn.primary { background: #1a5a50; color: #5dd6c8; border-color: #5dd6c8; }
+    .btn.primary:hover { background: #226858; }
+
+    #log {
+      font-size: 11px; color: #7a9aaa; background: #111c26;
+      border-radius: 6px; padding: 8px; min-height: 80px; max-height: 160px;
+      overflow-y: auto; line-height: 1.6;
+    }
+
+    #business-list { font-size: 12px; }
+    .biz-item {
+      padding: 6px 8px; border-radius: 4px; margin-bottom: 4px;
+      background: #1e2f3f; border-left: 3px solid #3a5a6a; cursor: pointer;
+    }
+    .biz-item:hover { background: #243a4f; }
+    .biz-item .biz-name { font-weight: 600; color: #c0d8e0; }
+    .biz-item .biz-meta { color: #6a8a9a; font-size: 11px; }
+
+    /* fog level colours */
+    .level-hidden    { border-left-color: #3a3a4a; }
+    .level-visible   { border-left-color: #6a8a9a; }
+    .level-discovered{ border-left-color: #5dd6c8; }
+    .level-engaged   { border-left-color: #00e8c8; }
+    .level-mastered  { border-left-color: #f0a030; }
+
+    .mapboxgl-popup-content {
+      background: #1a2433; color: #c0d8e0; border: 1px solid #2a3a4a;
+      border-radius: 8px; padding: 12px; font-size: 13px; min-width: 180px;
+    }
+    .mapboxgl-popup-content h3 { color: #5dd6c8; margin-bottom: 4px; font-size: 14px; }
+    .mapboxgl-popup-content p  { color: #8aaaba; font-size: 12px; margin: 2px 0; }
+    .mapboxgl-popup-content .popup-actions { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+    .mapboxgl-popup-content .popup-btn {
+      padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer;
+      font-size: 12px; background: #243447; color: #c0d8e0; border: 1px solid #2e4a5a;
+    }
+    .mapboxgl-popup-content .popup-btn:hover { background: #2e4a5a; }
+    .mapboxgl-popup-close-button { color: #6a8a9a !important; font-size: 18px; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(1.3); }
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="sidebar">
+    <h1>Fog of Opportunity</h1>
+    <p style="font-size:11px;color:#6a8a9a;">Craffft NZ Food &amp; Fibre pilot</p>
+
+    <h2>Reveal fog</h2>
+    <button class="btn primary" id="btn-reveal-gisborne">Reveal nearby (Gisborne)</button>
+    <button class="btn primary" id="btn-reveal-northland">Reveal nearby (Northland)</button>
+    <button class="btn" id="btn-reveal-horticulture">Reveal by interest: horticulture</button>
+    <button class="btn" id="btn-reveal-research">Reveal by interest: research</button>
+    <button class="btn" id="btn-reveal-automation">Reveal by interest: automation</button>
+    <button class="btn" id="btn-refresh">Refresh map</button>
+
+    <h2>Activity log</h2>
+    <div id="log">Waiting for actions...</div>
+
+    <h2>Businesses</h2>
+    <div id="business-list">Loading...</div>
+  </div>
+
+  <script>
+  (async () => {
+    // ── config ──────────────────────────────────────────────────────────────
+    const cfg = await fetch('/api/config').then(r => r.json());
+    if (!cfg.mapboxToken) {
+      document.getElementById('map').innerHTML =
+        '<div style="color:#f0a030;padding:24px;font-size:14px;">Add MAPBOX_TOKEN to .env and restart the server.</div>';
+    }
+
+    mapboxgl.accessToken = cfg.mapboxToken;
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/dark-v11',
+      center: [174.0, -39.5],
+      zoom: 5.5,
+    });
+
+    // ── state ────────────────────────────────────────────────────────────────
+    let businesses = [];
+    const log = document.getElementById('log');
+    function addLog(msg) {
+      const t = new Date().toLocaleTimeString();
+      log.innerHTML = `<span style="color:#5dd6c8">${t}</span> ${msg}<br>` + log.innerHTML;
+    }
+
+    // ── colours ──────────────────────────────────────────────────────────────
+    const COLOURS = {
+      hidden:     '#3a3a5a',
+      visible:    '#6a8a9a',
+      discovered: '#5dd6c8',
+      engaged:    '#00e8c8',
+      mastered:   '#f0a030',
+    };
+
+    // ── fog tile overlay ─────────────────────────────────────────────────────
+    async function loadFogLayer() {
+      const geojson = await fetch('/api/tiles').then(r => r.json());
+
+      if (map.getSource('fog-tiles')) {
+        // Already exists — just update the data
+        map.getSource('fog-tiles').setData(geojson);
+        return;
+      }
+
+      map.addSource('fog-tiles', { type: 'geojson', data: geojson });
+
+      // Find the first label layer so fog sits below text
+      const firstLabelLayer = map.getStyle().layers.find(l =>
+        l.type === 'symbol' && l.layout && l.layout['text-field']
+      );
+      const beforeLayer = firstLabelLayer ? firstLabelLayer.id : undefined;
+
+      // Fill — dark fog with opacity driven by fogState
+      map.addLayer({
+        id: 'fog-fill',
+        type: 'fill',
+        source: 'fog-tiles',
+        paint: {
+          'fill-color': [
+            'match', ['get', 'fogState'],
+            'hidden',   '#060e1a',
+            'visible',  '#0a1f35',
+            'explored', '#0a1f35',
+            '#060e1a',
+          ],
+          'fill-opacity': [
+            'match', ['get', 'fogState'],
+            'hidden',   0.82,
+            'visible',  0.35,
+            'explored', 0.0,
+            0.82,
+          ],
+          'fill-opacity-transition': { duration: 900, delay: 0 },
+        },
+      }, beforeLayer);
+
+      // Subtle grid lines on fogged tiles only
+      map.addLayer({
+        id: 'fog-grid',
+        type: 'line',
+        source: 'fog-tiles',
+        filter: ['!=', ['get', 'fogState'], 'explored'],
+        paint: {
+          'line-color': '#1a3a5c',
+          'line-width': 0.6,
+          'line-opacity': [
+            'match', ['get', 'fogState'],
+            'hidden',  0.5,
+            'visible', 0.2,
+            0.0,
+          ],
+        },
+      }, beforeLayer);
+    }
+
+    // ── load & render ────────────────────────────────────────────────────────
+    async function loadBusinesses() {
+      const data = await fetch('/api/businesses').then(r => r.json());
+      businesses = data.businesses || [];
+      renderList();
+      renderMarkers();
+    }
+
+    function renderList() {
+      const el = document.getElementById('business-list');
+      el.innerHTML = businesses.map(b => `
+        <div class="biz-item level-${b.engagementLevel}" onclick="openPopupFor('${b.id}')">
+          <div class="biz-name">${b.name}</div>
+          <div class="biz-meta">${b.industryType} · ${b.region} · <b style="color:${COLOURS[b.engagementLevel]}">${b.engagementLevel}</b></div>
+        </div>
+      `).join('');
+    }
+
+    const markers = {};
+    function renderMarkers() {
+      // Remove old markers
+      Object.values(markers).forEach(m => m.remove());
+      Object.keys(markers).forEach(k => delete markers[k]);
+
+      businesses.forEach(b => {
+        if (b.lat == null || b.lng == null) return;
+        const colour = COLOURS[b.engagementLevel] || COLOURS.hidden;
+        const el = document.createElement('div');
+        el.style.cssText = `
+          width:14px; height:14px; border-radius:50%;
+          background:${colour}; border:2px solid ${colour};
+          opacity:${b.engagementLevel === 'hidden' ? 0.4 : 0.9};
+          ${b.engagementLevel === 'engaged' ? 'animation:pulse 1.5s infinite;' : ''}
+          cursor:pointer;
+        `;
+
+        const popup = new mapboxgl.Popup({ offset: 14, closeButton: true })
+          .setHTML(popupHTML(b));
+
+        const marker = new mapboxgl.Marker({ element: el })
+          .setLngLat([b.lng, b.lat])
+          .setPopup(popup)
+          .addTo(map);
+
+        markers[b.id] = marker;
+      });
+    }
+
+    function popupHTML(b) {
+      const next = nextAction(b.engagementLevel);
+      return `
+        <h3>${b.name}</h3>
+        <p>${b.industryType} · ${b.region}</p>
+        <p>Status: <b style="color:${COLOURS[b.engagementLevel]}">${b.engagementLevel}</b></p>
+        ${b.tags && b.tags.length ? `<p>Tags: ${b.tags.join(', ')}</p>` : ''}
+        <div class="popup-actions">
+          ${next ? `<button class="popup-btn" onclick="fogAction('${next.action}','${b.id}')">${next.label}</button>` : ''}
+        </div>
+      `;
+    }
+
+    function nextAction(level) {
+      const map = {
+        visible:    { action: 'discover',       label: 'Discover this business' },
+        discovered: { action: 'start-quest',    label: 'Start a quest' },
+        engaged:    { action: 'complete-quest', label: 'Complete quest' },
+      };
+      return map[level] || null;
+    }
+
+    window.fogAction = async (action, businessId) => {
+      const res = await fetch(`/api/fog/${action}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessId }),
+      }).then(r => r.json());
+
+      if (res.ok) {
+        addLog(`${action} → ${res.engagementLevel}`);
+        await Promise.all([loadBusinesses(), loadFogLayer()]);
+      } else {
+        addLog(`Error: ${res.error}`);
+      }
+    };
+
+    window.openPopupFor = (id) => {
+      const marker = markers[id];
+      if (marker) marker.togglePopup();
+    };
+
+    // ── fog controls ──────────────────────────────────────────────────────────
+    async function postFog(path, body) {
+      const res = await fetch(`/api/fog/${path}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }).then(r => r.json());
+
+      if (res.ok) {
+        addLog(`${path}: ${res.count != null ? res.count + ' business(es) revealed' : res.engagementLevel}`);
+        await Promise.all([loadBusinesses(), loadFogLayer()]);
+      } else {
+        addLog(`Error: ${res.error}`);
+      }
+    }
+
+    document.getElementById('btn-reveal-gisborne').onclick = () =>
+      postFog('reveal-proximity', { lat: -38.6623, lng: 178.0176, radius: 50 });
+
+    document.getElementById('btn-reveal-northland').onclick = () =>
+      postFog('reveal-proximity', { lat: -35.7278, lng: 174.3239, radius: 50 });
+
+    document.getElementById('btn-reveal-horticulture').onclick = () =>
+      postFog('reveal-interest', { tags: ['horticulture'] });
+
+    document.getElementById('btn-reveal-research').onclick = () =>
+      postFog('reveal-interest', { tags: ['research'] });
+
+    document.getElementById('btn-reveal-automation').onclick = () =>
+      postFog('reveal-interest', { tags: ['automation'] });
+
+    document.getElementById('btn-refresh').onclick = loadBusinesses;
+
+    // ── init ─────────────────────────────────────────────────────────────────
+    map.on('load', () => {
+      loadFogLayer();
+      loadBusinesses();
+    });
+  })();
+  </script>
+</body>
+</html>

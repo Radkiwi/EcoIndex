@@ -1,0 +1,115 @@
+
+version: "3.7"
+
+services:
+    traefik:
+      image: traefik:latest
+      command:
+        - "--accesslog"
+        - "--api.insecure=true"
+        - "--providers.docker=true"
+        - "--entrypoints.web.address=:80"
+        - "--providers.docker.exposedbydefault=false"
+        - "--providers.docker.network=frontend-network"
+      ports:
+        - 80:80
+        - 9090:8080
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+      depends_on:
+        - api
+        - frontend
+      networks:
+        - frontend-network
+
+    frontend:
+      stdin_open: true
+      environment:
+        - CHOKIDAR_USEPOLLING=true
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+      restart: always
+      expose:
+        - 3000
+      env_file:
+          - ../prodscripts/env/.env
+      volumes:
+        - /app/node_modules
+        - /frontend:/app
+      networks:
+        - frontend-network
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.frontend.rule=Host(`ecoindex-01.sci.waikato.ac.nz`) && PathPrefix(`/frontend`)"
+        - "traefik.http.routers.frontend.entrypoints=web"
+        - "traefik.docker.network=frontend-network"
+        
+    api:
+        image: ecoindex/ecoindex-backend:stable
+        restart: always
+        volumes:
+          - ../prodscripts/alembic/migrations:/backend/migrations
+          - ../prodscripts/occurrence_download:/backend/occurrence_download
+          - ../prodscripts/templates/email:/backend/templates/email
+        environment:
+          - PORT=8000
+        command: bash -c "alembic upgrade head && uvicorn app.api.server:app --root-path /api/v1 --host 0.0.0.0 --port 8000 --reload"
+        env_file:
+          - ../prodscripts/env/.env
+          - ./prodscripts/occurrence_download:/backend/occurrence_download
+          - ./prodscripts/mci_download:/backend/mci_download
+        expose:
+          - 8000
+        depends_on:
+          - db
+        networks:
+          - frontend-network
+        labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.backend.rule=Host(`ecoindex-01.sci.waikato.ac.nz`) && PathPrefix(`/api/v1`)"
+          - "traefik.http.routers.backend.entrypoints=web"
+          - "traefik.http.middlewares.api-stripprefix.stripPrefix.prefixes=/api/v1"
+          - "traefik.http.routers.backend.middlewares=api-stripprefix"
+          - "traefik.docker.network=frontend-network"
+
+    apiv2:
+        image: ecoindex/ecoindex-backend:latest
+        restart: always
+        volumes:
+          - ./prodscripts/migrations:/backend/migrations
+          - ./prodscripts/occurrence_download:/backend/occurrence_download
+          - ./prodscripts/mci_download:/backend/mci_download
+          - ./prodscripts/templates/email:/backend/templates/email
+        environment:
+          - PORT=9000
+        command: bash -c "alembic upgrade head && uvicorn app.api.server:app --root-path /api/v2 --host 0.0.0.0 --port 9000 --reload"
+        env_file:
+          - ./prodscripts/envV2/.env
+        expose:
+          - 9000
+        depends_on:
+          - db
+        networks:
+          - frontend-network
+        labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.backendv2.rule=Host(`localhost`) && PathPrefix(`/api/v2`)"
+          - "traefik.http.routers.backendv2.entrypoints=web"
+          - "traefik.http.middlewares.apiv2-stripprefix.stripPrefix.prefixes=/api/v2"
+          - "traefik.http.routers.backendv2.middlewares=apiv2-stripprefix"
+        
+    db:
+        image: postgis/postgis
+        restart: always
+        volumes:
+          - ../ecoindex-db:/var/lib/postgresql/data
+        ports:
+          - 5432:5432
+        env_file:
+          - ../prodscripts/env/.env
+        networks:
+          - frontend-network
+      
+networks:
+    frontend-network:

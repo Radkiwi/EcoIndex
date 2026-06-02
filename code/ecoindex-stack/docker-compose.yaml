@@ -1,0 +1,103 @@
+
+version: "3.7"
+
+services:
+  traefik:
+      image: traefik:latest
+      command:
+        - "--accesslog"
+        - "--api.insecure=true"
+        # - "--api.dashboard=true"
+        - "--providers.docker=true"
+        - "--entrypoints.web.address=:80"
+        # - "--entrypoints.dashboard.address=:9090"
+        - "--providers.docker.exposedbydefault=false"
+        - "--providers.docker.network=frontend-network"
+      ports:
+        - 80:80
+        - 9090:8080
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+        # - traefik-public-certificates:/certificates
+      depends_on:
+        - api
+        - frontend
+      networks:
+        - frontend-network
+      # labels:
+        # - "traefik.enable=true"
+        # - "traefik.http.routers.api.rule=Host(`traefik.localhost`)"
+        # - "traefik.http.routers.api.service=api@internal"
+        # - "traefik.http.routers.api.entrypoints=dashboard"
+        # - "traefik.http.routers.api.middlewares=auth"
+        # - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/,test2:$$apr1$$d9hr9HBB$$4HxwgUir3HP4EsggP/QNo0"
+      
+
+  frontend:
+      stdin_open: true
+      environment:
+        - CHOKIDAR_USEPOLLING=true
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+      restart: always
+      expose:
+        - 3000
+      env_file:
+        - ./prodscripts/env/.env
+      volumes:
+        - node_modules:/app/node_modules
+        - ./frontend:/app
+      networks:
+        - frontend-network
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.frontend.rule=Host(`localhost`) && PathPrefix(`/frontend`)"
+        - "traefik.http.routers.frontend.entrypoints=web"
+
+  api:
+      build: 
+        context: ./backend
+        dockerfile: Dockerfile
+      restart: always
+      volumes:
+        - ./prodscripts/migrations:/backend/migrations
+        - ./prodscripts/occurrence_download:/backend/occurrence_download
+        - ./prodscripts/mci_download:/backend/mci_download
+        - ./prodscripts/templates/email:/backend/templates/email
+        - ./prodscripts/location_data:/backend/location_data
+      environment:
+        - PORT=8000
+      command: bash -c "alembic upgrade head && uvicorn app.api.server:app --root-path /api/v1 --host 0.0.0.0 --port 8000 --reload"
+      env_file:
+        - ./prodscripts/env/.env
+      expose:
+        - 8000
+      depends_on:
+        - db
+      networks:
+        - frontend-network
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.backend.rule=Host(`localhost`) && PathPrefix(`/api/v1`)"
+        - "traefik.http.routers.backend.entrypoints=web"
+        - "traefik.http.middlewares.api-stripprefix.stripPrefix.prefixes=/api/v1"
+        - "traefik.http.routers.backend.middlewares=api-stripprefix"
+          
+  db:
+      image: postgis/postgis
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      ports:
+        - 5432:5432
+      env_file:
+        - ./prodscripts/env/.env
+      networks:
+        - frontend-network
+
+volumes:
+    postgres_data:
+    node_modules:
+    # traefik-public-certificates:
+networks:
+    frontend-network:

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__3d4e2d60-856d-46f4-87d3-ea68a6f2f7ee__list_tables_for_base",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(node --check src/server.js)",
+      "Bash(node --check src/fog/fogEngine.js)",
+      "Bash(node --check src/map/fogLayer.js)"
+    ]
+  }
+}

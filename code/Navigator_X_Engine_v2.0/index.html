@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Eco-index Navigator X</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <!-- problematic css-->
+    <!-- link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+
+<body>
+<!-- <body id="collection-6731909e1a3d593bb7e7299d"> -->
+    <div id="navigator-embed">
+        <!-- Disclaimer overlay and popup -->
+        <div id="overlay"></div>
+
+        <!-- Scales on right hand side, showing color palette -->
+        <div id="scale-container" class="reset">
+            <div class="legend-header">
+                <p><b>Reconstruction Opportunity Scale</b></p>
+                <button id="toggle-scale-container" class="toggle-button"><i class="fas fa-minus"></i></button>
+            </div>
+            <div id="scale-container-content">
+                <div id="reconstructionScale" class="scale"></div>
+            </div>
+        </div>
+
+        <!-- Key for Existing Natural Areas on right hand side, showing color palette -->
+        <div id="ena-legend" class="ena-legend">
+            <div class="legend-header">
+                <p><b>Land Cover Snapshot</b></p>
+                <button id="toggle-ena-legend" class="toggle-button"><i class="fas fa-minus"></i></button>
+            </div>
+            <div id="ena-legend-content">
+                <div id="ena-legend-content">
+                    <div class="ena-legend-item">
+                        <div class="ena-legend-color" style="background-color: rgb(255, 51, 0);"></div>
+                        <div class="ena-legend-text">Built-up and Transport Areas</div><i
+                            class="fas fa-info-circle legend-info-icon"
+                            data-icon-id="Built-up and Transport Areas"></i>
+                    </div>
+                    <div class="ena-legend-item">
+                        <div class="ena-legend-color" style="background-color: rgb(201, 146, 34);"></div>
+                        <div class="ena-legend-text">Regenerating Ecosystems</div><i
+                            class="fas fa-info-circle legend-info-icon" data-icon-id="Regenerating"></i>
+                    </div>
+                    <div class="ena-legend-item">
+                        <div class="ena-legend-color" style="background-color: rgb(0, 122, 37);"></div>
+                        <div class="ena-legend-text">Mature Ecosystems</div><i
+                            class="fas fa-info-circle legend-info-icon" data-icon-id="Mature"></i>
+                    </div>
+                    <div class="ena-legend-item">
+                        <div class="ena-legend-color" style="background-color: rgb(37, 247, 48);"></div>
+                        <div class="ena-legend-text">Reconstruction Opportunity</div><i
+                            class="fas fa-info-circle legend-info-icon" data-icon-id="Potentially Restorable"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acual map object -->
+        <div id='map'></div>
+
+        <!-- Full screen button -->
+        <div><button id="fullscreen-btn"><i class="fas fa-expand"></i></button></div>
+
+
+        <!-- Legend for showing/hiding individual component layers -->
+        <div id='control-panel'>
+            <div class="legend-header">
+                <p><b>Control Panel</b></p>
+                <button id="toggle-control-panel" class="toggle-button"><i class="fas fa-minus"></i></button>
+            </div>
+            <div id="control-panel-content">
+                <div class="tab">
+                    <button id="tablink-reconstruction" class="tablinks"><strong>Prioritisation
+                            Options</strong></button>
+                    <button id="tablink-reference" class="tablinks"><strong>Contextual Info</strong></button>
+                </div>
+                <div id="tab-reconstruction" class="tabcontent">
+                    <div class="toggleAllContainer">
+                        <input type='checkbox' id='toggleAllReconstruction' checked>
+                        <label for='toggleAllReconstruction'>Select All</label>
+                    </div>
+                    <div id="reconstructionToggles">
+                        <div>
+                            <input type='checkbox' id='togglePixelScore_connect' data-attribute="PixelScore_connect"
+                                checked>
+                            <label for='togglePixelScore_connect'>Connectivity Stepping Stones</label>
+                            <i class="fas fa-info-circle info-icon" data-icon-id="Connectivity"></i>
+                        </div>
+                        <div>
+                            <input type='checkbox' id='togglePixelScore_covergoal'
+                                data-attribute="PixelScore_threatenv" checked>
+                            <label for='togglePixelScore_covergoal'>Ecosystem 15% Cover Goal</label>
+                            <i class="fas fa-info-circle info-icon" data-icon-id="covergoal"></i>
+                        </div>
+                        <div>
+                            <input type='checkbox' id='togglePixelScore_landstaf' data-attribute="PixelScore_landstaf"
+                                checked>
+                            <label for='togglePixelScore_landstaf'>Land Stability</label>
+                            <i class="fas fa-info-circle info-icon" data-icon-id="Land_Stability"></i>
+                        </div>
+                        <div>
+                            <input type='checkbox' id='togglePixelScore_legalprot' data-attribute="PixelScore_legalprot"
+                                checked>
+                            <label for='togglePixelScore_legalprot'>Legal Protection</label>
+                            <i class="fas fa-info-circle info-icon" data-icon-id="Legal_Protection"></i>
+                        </div>
+                        <div>
+                            <input type='checkbox' id='togglePixelScore_vegprox' data-attribute="PixelScore_vegprox"
+                                checked>
+                            <label for='togglePixelScore_vegprox'>Native Vegetation Proximity</label>
+                            <i class="fas fa-info-circle info-icon" data-icon-id="Native_Veg_Proximity"></i>
+                        </div>
+                        <div>
+                            <input type='checkbox' id='togglePixelScore_shapeopt' data-attribute="PixelScore_shapeopt"
+                                checked>
+                            <label for='togglePixelScore_shapeopt'>Native Vegetation Shape Improvement</label>
+                            <i class="fas fa-info-circle info-icon" data-icon-id="ENA_Shape_Improvement"></i>
+                        </div>
+                        <div>
+                            <input type='checkbox' id='togglePixelScore_protbuff' data-attribute="PixelScore_protbuff"
+                                checked>
+                            <label for='togglePixelScore_protbuff'>Protective Buffer</label>
+                            <i class="fas fa-info-circle info-icon" data-icon-id="Protective_Buffer"></i>
+                        </div>
+                        <div>
+                            <input type='checkbox' id='togglePixelScore_relaff' data-attribute="PixelScore_relaff"
+                                checked>
+                            <label for='togglePixelScore_relaff'>Relative Affordability</label>
+                            <i class="fas fa-info-circle info-icon" data-icon-id="Relative_Affordability"></i>
+                        </div>
+                        <div>
+                            <input type='checkbox' id='togglePixelScore_ripben' data-attribute="PixelScore_ripben"
+                                checked>
+                            <label for='togglePixelScore_ripben'>Riparian Benefit</label>
+                            <i class="fas fa-info-circle info-icon" data-icon-id="Riparian_Benefit"></i>
+                        </div>
+                        <div>
+                            <input type='checkbox' id='togglePixelScore_threatenv' data-attribute="PixelScore_threatenv"
+                                checked>
+                            <label for='togglePixelScore_threatenv'>Threatened Environments</label>
+                            <i class="fas fa-info-circle info-icon" data-icon-id="Threatened_Environment"></i>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-reference" class="tabcontent" style="display: none;">
+                    <div>
+                        <input type='checkbox' id='toggleWRC_Boundary' checked>
+                        <label for='toggleWRC_Boundary'>WRC Boundary</label>
+                    </div>
+                    <div>
+                        <input type='checkbox' id='toggleWaikato_Catchments'>
+                        <label for='toggleWaikato_Catchments'>Eco-index Catchments</label>
+                        <i class="fas fa-info-circle info-icon" data-icon-id="Catchments"></i>
+                    </div>
+                    <div>
+                        <input type='checkbox' id='toggleWaikato_Land_Cover_Snapshot'>
+                        <label for='toggleWaikato_Land_Cover_Snapshot'>Land Cover Snapshot</label>
+                        <i class="fas fa-info-circle info-icon" data-icon-id="LandCover"></i>
+                    </div>
+                    <div>
+                        <input type='checkbox' id='toggleWaikato_Ecosystem_Projector'>
+                        <label for='toggleWaikato_Ecosystem_Projector'>Ecosystem Projector</label>
+                        <i class="fas fa-info-circle info-icon" data-icon-id="Ecosystems"></i>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="heatmapToggle" checked>
+                        <label for="heatmapToggle">Satellite View</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Icon Popup -->
+        <div id="info-popup" class="popup">
+            <div class="popup-content">
+                <div id="popup-text"></div> <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+
+    <script src='./app.js'></script>
+</body>
+
+</html>

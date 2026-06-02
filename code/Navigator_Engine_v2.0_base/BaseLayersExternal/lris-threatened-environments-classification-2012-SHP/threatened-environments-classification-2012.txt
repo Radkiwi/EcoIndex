@@ -1,0 +1,49 @@
+========================================================================
+ Threatened Environments Classification (2012)
+------------------------------------------------------------------------
+ https://lris.scinfo.org.nz/layer/48288-threatened-environments-classification-2012/
+========================================================================
+From: Landcare Research
+
+Description:
+  This layer comes from the Threatened Environment Classification (TEC) version
+  2012, which is a source of national scale background information on New
+  Zealand's land environments. Specifically, it shows how much native (indigenous)
+  vegetation remains within land environments, and how past vegetation loss and
+  legal protection are distributed across New Zealand's landscape. The TEC uses
+  indigenous vegetation as a surrogate for indigenous biodiversity. This includes
+  indigenous ecosystems, habitats and communities: the indigenous species,
+  subspecies and varieties that are supported by indigenous vegetation, and their
+  genetic diversity. The TEC is most appropriately applied to help identify places
+  that are priorities for formal protection against clearance and/or incompatible
+  land-uses, and for ecological restoration to restore lost species, linkages and
+  buffers. The TEC is a combination of three national databases: Land Environments
+  New Zealand (LENZ), classes of the 4th Land Cover Database (LCDB4, based on 2012
+  satellite imagery) and the protected areas network (version 2012, reflecting
+  areas legally protected for the purpose of natural heritage protection). 
+  
+  For more information see: Cieraad E, Walker S, Price R, Barringer J. 2015. An
+  updated assessment of indigenous cover remaining and legal protection in New
+  Zealand’s land environments. New Zealand Journal of Ecology 39(2).
+
+Region: New Zealand
+
+Category: Terrestrial ecosystem
+
+CRS: NZGD2000 / New Zealand Transverse Mercator 2000
+
+------------------------------------------------------------------------
+ Processing steps applied by LRIS Portal
+------------------------------------------------------------------------
+
+- imported to LRIS Portal in Shapefile format on 15 Mar 2012
+- updated with new data on 25 Mar 2015
+- clipped to (34.130°S 158.217°E)-(47.290°S 186.786°E)
+- converted by LRIS Portal to Shapefile on 10 May 2023 (reference #2970409)
+
+====================
+No license specified
+====================
+
+No license was specified for this layer. This could mean default rights under copyright law for your legal jurisdiction may apply. Please check with LRIS Portal if you're unsure of your right to access and use this layer.
+

@@ -1,0 +1,20 @@
+{
+  "name": "craffft-fog-map",
+  "version": "1.0.0",
+  "description": "Craffft Fog of Opportunity map system — NZ food & fibre sector",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "airtable": "^0.12.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "ngeohash": "^0.6.3"
+  }
+}

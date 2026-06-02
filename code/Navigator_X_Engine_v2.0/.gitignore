@@ -1,0 +1,13 @@
+geojson/
+ecan_deliverable2_heatmap_and_attributes_20230810/
+Connectivity_corridors_UNFILTERED_TO_RTZ/
+ECAN2024_Mt2Sea_Connectivity/
+kx-eco-index-current-status-and-restoration-priority-for-nz-SHP/
+ECAN2024_Attribute2_Connectivity_v3/
+RECONSTRUCTION_HEATMAP_epsg2193_10m_v1_vectorised/
+tilesets/
+server
+prospector*
+.ipynb_checkpoints/
+*.geojson
+*.mbtiles

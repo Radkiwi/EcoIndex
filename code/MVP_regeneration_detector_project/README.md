@@ -1,0 +1,20 @@
+# MVP regeneration detector project
+Detection of regenerating vegetation in Aotearoa New Zealand
+
+**Project Background**
+This project was funded by the charitable entity Imaginal Seeds Trust and aimed at detecting mass native tree planting efforts through the use of satellite imagery combined with AI (specifically, a neural network). This project was a joint effort between Litmus Datatech, Trees That Count, Taranaki Mounga Project and led by Eco-index. Litmus Datatech created the satellite data collection method as well as the neural network model (based on Prithvi V2). Trees That Count provided training data - specifically, the areas and locations of recorded native tree planting efforts across Aotearoa New Zealand. Taranaki Mounga Project provided ground truthing of plantings across the Waiwhakaiho catchment of the Taranaki Region and Eco-index conceptualised the project, organized the efforts from each organization, as well as provided data cleaning and handling between each step.
+
+The training data consisted of native tree plantings between 30-50% canopy cover (to represent ‘young’ vegetation) in a KML file format. These plantings locations were spread across Aotearoa New Zealand and varied in age since planting from 2015 to 2025.
+
+**Model Creation Overview**
+Satellite Data
+The first step was to capture the satellite data, which can be done by following the steps within the "eco-index-main" folder and following the README file. This will capture the most recent Google satellite imagery available using the .KML files of planting efforts for location and will follow a panning approach, where satellite images will overlap with each other to ensure complete coverage of the area of interest.
+
+Model Training and Running
+An initial attempt to train a model using the SAM2 model to classify the planted areas did not work out successfully due to model configuration issues. However, these files are still maintained within this directory in case they are possibly helpful to future efforts to continue developing this detector. Instead of SAM2, the Prithvi V2 model structure was ultimately used with more success. The outcome is described in the "eco-index-classifier-master" directory. This directory also contains a README file which guides the steps required to both train and run inference on the MVP Regeneration Detector classification model. The output of the classification is a folder of predictions in which each file created contains 3 images (from left to right: the satellite image, the probability heatmap, overlay of predictions over a pixel value of 127 coloured in green on top of the satellite image).
+
+Re-gaining Geospatial Reference of Model Outputs
+Finally, Eco-index created a script (validation_image_prep_shapefile_thirds.py) which splits up the output files mentioned above into the three separate segments, reads the lat and long coordinates of the image, georeferences the detections and creates shapefiles based on a given threshold pixel value (between 0 and 255). The next step is to run the join_shapefiles.py script which simply goes through all of the individual shapefiles created and joins them into one single file. This was then validated within QGIS as well as converted into a KML file and validated via ground truthing using Google Earth.
+
+The MVP Regeneration Detector model predicts where young vegetation regeneration is in the Waiwhakaiho region to 28% accuracy by using an IOU calculation. Although the training data used was of known mass native tree plantings locations, the outputs do not appear to always locate native tree plantings. The model appears to also often be finding passively regenerated vegetation (native and non-native), and sometimes fairly established forest cover. Therefore the user should note that this model’s ecological utility is varied. It may pick up regenerating tree cover (actively or passively originating), but will not always be native or young (i.e. low canopy cover).  Further model refinement by training with additional planted native tree data would improve accuracy and usefulness for ecological applications.
+
