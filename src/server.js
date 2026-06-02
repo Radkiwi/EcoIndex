@@ -14,6 +14,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Serve landing page as root for ecoindex.rad.kiwi
+app.get('/', (req, res, next) => {
+  const host = req.hostname || '';
+  if (host.startsWith('ecoindex.')) {
+    return res.sendFile(path.join(__dirname, '../public/landing.html'));
+  }
+  next();
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', project: 'Craffft Fog Map', timestamp: new Date().toISOString() });
